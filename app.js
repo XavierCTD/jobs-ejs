@@ -1,17 +1,59 @@
+require("dotenv").config(); // load .env variables
+
 const expess = require("express");
 const app = expess();
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
+
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI,
+  collection: "sessions",
+});
+store.on("error", (err) => {
+  console.log(err);
+});
 
 app.set("view engine", "ejs");
 app.use(require("body-parser").urlencoded({ extended: true }));
 
+const sessionParms = {
+  secret: process.env.SESSION_SECRET,
+  resave: true,
+  saveUninitialized: true,
+  store: store,
+  cookie: { secure: false, sameSite: "strict" },
+};
+
+if (app.get("env") === "production") {
+  app.set("trust proxy", 1);
+  sessionParms.cookie.secure = true; // serve secure cookies in production
+}
+
+app.use(session(sessionParms));
+app.use(require("connect-flash")());
+
 // secret word handling
-let secretWord = "syzygy";
+
+// let secretWord = "syzygy";
 app.get("/secretWord", (req, res) => {
-  res.render("secretWord", { secretWord });
+  if (!req.session.secretWord) {
+    req.session.secretWord = "syzygy";
+  }
+  res.locals.info = req.flash("info");
+  res.locals.errors = req.flash("error");
+  res.render("secretWord", {
+    secretWord: req.session.secretWord,
+  });
 });
 
 app.post("/secretWord", (req, res) => {
-  secretWord = req.body.secretWord;
+  if (req.body.secretWord.toUpperCase()[0] === "P") {
+    req.flash("error", "That word won't work!");
+    req.flash("error", "You can't use words that start with p.");
+  } else {
+    req.session.secretWord = req.body.secretWord;
+    req.flash("info", "The secret word was changed.");
+  }
   res.redirect("/secretWord");
 });
 
