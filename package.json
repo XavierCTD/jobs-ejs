@@ -17,7 +17,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "build": "vite build \"React Folder\"",
+    "preview": "vite preview \"React Folder\""
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -34,11 +38,25 @@
     "mongoose": "^9.2.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-router": "^7.13.0",
+    "styled-components": "^6.3.11",
     "xss-clean": "^0.1.4"
   },
+  "overrides": {
+    "minimatch": "^10.2.1"
+  },
   "devDependencies": {
-    "eslint": "^10.0.0",
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^10.0.1",
+    "eslint-plugin-react-refresh": "^0.5.0",
+    "globals": "^17.3.0",
     "nodemon": "^3.1.11",
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.1",
+    "vite": "^7.3.1"
   }
 }
