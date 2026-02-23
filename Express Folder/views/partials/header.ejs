@@ -1,4 +1,73 @@
-<h1>The Jobs EJS Application</h1>
+<h1>Coder-Panet-X</h1>
+<style>
+    a {
+        margin-right: 10px;
+        padding: 25px;
+        display: inline-block;
+        text-decoration: none;
+        color: inherit;
+        font-size: 20px;
+        font-weight: bold;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        align-items: normal;
+        justify-content: center;
+        border: 2px solid black;
+        border-radius: 5px;
+    }
+
+    a:hover {
+        border: 2px solid lightgrey;
+        border-radius: 5px;
+        color: lightgrey;
+    }
+    
+    ul {
+        display: flex;
+        justify-content: center;
+        background-color: grey;
+        list-style-type: none;
+        padding: 0;
+    }
+
+    li {
+        margin: 0 10px;
+    }
+
+    h1 {
+        animation-name: intro;
+        animation-duration: 10s;
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: forwards; 
+        text-align: center;
+        font-size: 30px;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    @keyframes intro {
+        0% {
+            border: 2px solid rgb(210, 4, 4);
+            color: rgb(210, 5, 5);
+        }
+        25% {
+            border: 2px solid rgb(10, 210, 5);
+            color: rgb(10, 210, 5);
+        }
+        50% {
+            border: 2px solid rgb(5, 210, 210);
+            color: rgb(5, 210, 210);
+        }
+        75% {
+            border: 2px solid rgb(165, 5, 210);
+            color: rgb(165, 5, 210);
+        }
+        100% {
+            border: 2px solid rgb(210, 5, 5);
+            color: rgb(210, 5, 5);
+        }
+    }
+
+</style>
 <% if (errors) {
     errors.forEach((err) => { %>
         <div>Error: <%= err %></div>

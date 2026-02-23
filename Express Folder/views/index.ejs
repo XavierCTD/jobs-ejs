@@ -1,13 +1,15 @@
 <%- include("partials/head.ejs") %>
 <%- include("partials/header.ejs") %>
 <% if (user) { %>
-    <a href="/app">Open the React application.</a>
-    <a href="/secretWord">Click this link to view/change the secret word.</a>
+    <ul>
+        <li><a href="/app">Enter</a></li>
+        <li><a href="/secretWord">Secret Word</a></li>
+    </ul>
     <form method="POST" action="/sessions/logoff">
       <button type="submit">Log out</button>
     </form>
 <% } else { %>
-    <a href="/sessions/logon">Click this link to log in.</a>
-    <a href="/sessions/register">Click this link to register.</a>
+    <a href="/sessions/logon">Log in.</a>
+    <a href="/sessions/register">Register.</a>
 <% } %>
 <%- include("partials/footer.ejs") %>
