@@ -13,13 +13,24 @@ router.route("/register").get(registerShow).post(registerDo);
 router
   .route("/logon")
   .get(logonShow)
-  .post(
-    passport.authenticate("local", {
-      successRedirect: "/app",
-      failureRedirect: "/sessions/logon",
-      failureFlash: true,
-    }),
-  );
+  .post((req, res, next) => {
+    passport.authenticate("local", (err, user, info) => {
+      if (err) return next(err);
+      if (!user) {
+        req.flash("error", info?.message || "Incorrect credentials.");
+        return res.redirect("/sessions/logon");
+      }
+
+      req.logIn(user, (loginErr) => {
+        if (loginErr) return next(loginErr);
+
+        req.session.save((saveErr) => {
+          if (saveErr) return next(saveErr);
+          res.redirect("/");
+        });
+      });
+    })(req, res, next);
+  });
 
 router.route("/logoff").post(logoff);
 

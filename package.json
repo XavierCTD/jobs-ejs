@@ -16,8 +16,8 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js",
-    "dev": "nodemon app.js",
+    "start": "node \"Express Folder/app.js\"",
+    "dev": "nodemon \"Express Folder/app.js\"",
     "lint": "eslint .",
     "format": "prettier --write .",
     "build": "vite build \"React Folder\"",

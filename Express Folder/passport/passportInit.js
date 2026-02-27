@@ -12,7 +12,8 @@ const passportInit = () => {
       },
       async (username, password, next) => {
         try {
-          const user = await User.findOne({ username: username });
+          const normalUsername = String(username).trim().toLowerCase();
+          const user = await User.findOne({ username: normalUsername });
           if (!user) {
             return next(null, false, { message: "Incorrect credentials." });
           }

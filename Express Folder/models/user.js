@@ -7,6 +7,10 @@ const UserSchema = new mongoose.Schema({
     required: [true, "Please provide username"],
     minlength: 1,
     maxlength: 50,
+    trim: true,
+    lowercase: true,
+    unique: true,
+    index: true,
   },
   notes: {
     type: String,
@@ -26,8 +30,7 @@ UserSchema.pre("save", async function () {
 });
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
-  const isMatch = await bcrypt.compare(candidatePassword, this.password);
-  return isMatch;
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 module.exports = mongoose.model("User", UserSchema);

@@ -29,6 +29,14 @@ export default function Header({ title }) {
               isActive ? styled.active : styled.inactive
             }
           >
+            <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                isActive ? styled.active : styled.inactive
+              }
+            >
+              About
+            </NavLink>
             Log-out
           </NavLink>
         </nav>

@@ -8,9 +8,9 @@ const session = require("express-session");
 const passport = require("passport");
 const passportInit = require("./passport/passportInit");
 const MongoDBStore = require("connect-mongodb-session")(session);
-const connectDB = require("./Express Folder/database/connect");
-const storeLocals = require("./Express Folder/middleware/storeLocals");
-const auth = require("./Express Folder/middleware/auth");
+const connectDB = require("./database/connect");
+const storeLocals = require("./middleware/storeLocals");
+const auth = require("./middleware/auth");
 
 const store = new MongoDBStore({
   uri: process.env.MONGO_URI,
@@ -20,16 +20,15 @@ store.on("error", (err) => {
   console.log(err);
 });
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "Express Folder", "views"));
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
 const sessionParms = {
   secret: process.env.SESSION_SECRET,
-  resave: true,
-  saveUninitialized: true,
-  store: store,
-  cookie: { secure: false, sameSite: "strict" },
+  resave: false,
+  saveUninitialized: false,
+  store,
+  cookie: { secure: false, sameSite: "lax", httpOnly: true },
 };
 
 if (app.get("env") === "production") {
@@ -38,37 +37,33 @@ if (app.get("env") === "production") {
 }
 
 app.use(session(sessionParms));
+
 passportInit();
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(require("connect-flash")());
 app.use(storeLocals);
 
-app.get("/", (req, res) => {
-  res.render("index");
-});
+// API routes
 
-app.use("/sessions", require("./Express Folder/routes/sessionRoutes"));
+app.use("/sessions", require("./routes/sessionRoutes"));
 
-// secret word handling
-
-// let secretWord = "syzygy";
-const secretWordRouter = require("./Express Folder/routes/secretWord");
+const secretWordRouter = require("./routes/secretWord");
+const { Http2ServerRequest } = require("http2");
 app.use("/secretWord", auth, secretWordRouter);
 
-const reactDistPath = path.join(__dirname, "React Folder", "dist");
-const reactIndexPath = path.join(reactDistPath, "index.html");
+const reactDistPath = path.join(__dirname, "..", "React Folder", "dist");
+app.use(express.static(reactDistPath, { index: false }));
 
-if (fs.existsSync(reactIndexPath)) {
-  app.use("/assets", express.static(path.join(reactDistPath, "assets")));
-  app.get(/^\/app(\/.*)?$/, auth, (req, res) => {
-    res.sendFile(reactIndexPath);
-  });
-} else {
-  app.get("/app", auth, (req, res) => {
-    res.status(503).send("React app is not built yet. Run `npm run build`.");
-  });
-}
+const sendReactPath = (res) => {
+  res.sendFile(path.join(reactDistPath, "index.html"));
+};
+
+app.get("/", auth, (req, res) => sendReactPath(res));
+app.get("/about", auth, (req, res) => sendReactPath(res));
+app.get(/^\/app(\/.*)?$/, auth, (req, res) => sendReactPath(res));
+
+// Error handling middleware
 
 app.use((req, res) => {
   res.status(404).send(`That page (${req.url}) does not exist!`);
@@ -76,7 +71,7 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   res.status(500).send(err.message);
-  console.log(err);
+  console.error(err);
 });
 
 const port = process.env.PORT || 3000;
