@@ -1,7 +1,6 @@
 require("dotenv").config(); // load .env variables
 
 const path = require("path");
-const fs = require("fs");
 const express = require("express");
 const app = express();
 const session = require("express-session");
@@ -49,7 +48,6 @@ app.use(storeLocals);
 app.use("/sessions", require("./routes/sessionRoutes"));
 
 const secretWordRouter = require("./routes/secretWord");
-const { Http2ServerRequest } = require("http2");
 app.use("/secretWord", auth, secretWordRouter);
 
 const reactDistPath = path.join(__dirname, "..", "React Folder", "dist");
