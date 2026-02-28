@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 export default function About() {
   return (
     <div style={{ padding: "1rem" }}>
@@ -29,7 +27,7 @@ export default function About() {
         Feel free to explore the resources and take notes on anything you find
         interesting!
       </p>
-      <Link to="/">Go back to Home</Link>
+      <a href="/">Back to Home</a>
     </div>
   );
 }
