@@ -7,17 +7,12 @@ const renderAuthPage = (title, body) => `<!DOCTYPE html>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>${title}</title>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    form { display: grid; gap: .75rem; max-width: 300px; margin: auto; }
-    input, button { padding: .5rem; }
-    .msg { margin: .5rem 0; color: red; }
-    .ok { color: green; }
-    a { margin-right: .75rem;}
-  </style>
+  <link rel="stylesheet" href="/public/auth.css" />
 </head>
 <body>
+<main class="auth-shell">
   ${body}
+</main>
 </body>
 </html>`;
 
@@ -76,9 +71,6 @@ const logoff = (req, res) => {
 
 const logonShow = (req, res) => {
   if (req.user) {
-    setTimeout(() => {
-      logonShow.innerHTML = "Logged In.";
-    }, 1000);
     return res.redirect("/");
   }
 
@@ -94,7 +86,8 @@ const logonShow = (req, res) => {
     renderAuthPage(
       "Log In",
       `
-    <h1>Log In</h1>
+    <h1>CoderPlanet-X</h1>
+    <p>Welcome! To enter the page, please register down here. Once you are registered you can now be able to login.</p>
     ${errorHtml}
     ${infoHtml}
     <form action="/sessions/logon" method="POST">

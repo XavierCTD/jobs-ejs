@@ -45,6 +45,7 @@ app.use(storeLocals);
 
 // API routes
 
+app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/sessions", require("./routes/sessionRoutes"));
 
 const secretWordRouter = require("./routes/secretWord");
@@ -58,7 +59,9 @@ const sendReactPath = (res) => {
 };
 
 app.get("/", auth, (req, res) => sendReactPath(res));
+app.get("/secretword", auth, (req, res) => sendReactPath(res));
 app.get("/about", auth, (req, res) => sendReactPath(res));
+app.get("/notes", auth, (req, res) => sendReactPath(res));
 app.get(/^\/app(\/.*)?$/, auth, (req, res) => sendReactPath(res));
 
 // Error handling middleware
