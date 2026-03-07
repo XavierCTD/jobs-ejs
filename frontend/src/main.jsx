@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import About from "./pages/About.jsx";
-import ViewNotes from "./features/CoderPlanetViewNotes.jsx";
+import NotesPage from "./features/NotesPage.jsx";
 import Header from "./shared/Header.jsx";
 
 function LayoutPage({ children }) {
@@ -40,7 +40,7 @@ createRoot(document.getElementById("root")).render(
           path="/notes"
           element={
             <LayoutPage>
-              <ViewNotes />
+              <NotesPage />
             </LayoutPage>
           }
         />

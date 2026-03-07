@@ -1,13 +1,5 @@
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import spaceWithPlanets from "../shared/photos/SpaceWithPlanets.jpg";
-
-const Aboutbody = styled.body`
-  padding: 1rem;
-  background-image: url(${spaceWithPlanets});
-  background-size: cover;
-  background-position: center;
-`;
 
 const DivElement = styled.div`
   margin-bottom: 1rem;
@@ -64,7 +56,7 @@ const LinkElement = styled(NavLink)`
 
 export default function About() {
   return (
-    <Aboutbody>
+    <>
       <DivElement>
         <Header1>About CoderPlanet-X:</Header1>
       </DivElement>
@@ -80,9 +72,8 @@ export default function About() {
         </ParagraphElement>
         <br />
         <ParagraphElement>
-          Once you log in, you can write and save your notes. Your notes will be
-          saved in your browser's local storage, so they will persist even if
-          you refresh the page or close the browser.
+          Once you log in, your notes are saved to your account, so you can
+          create, view, edit, and delete them from any session.
         </ParagraphElement>
         <br />
         <ParagraphElement>
@@ -91,6 +82,6 @@ export default function About() {
         </ParagraphElement>
       </DivElement>
       <LinkElement to="/">Back to Home</LinkElement>
-    </Aboutbody>
+    </>
   );
 }

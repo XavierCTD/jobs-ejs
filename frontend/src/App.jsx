@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import styled from "styled-components";
 
 export default function App() {
   const [secretWord, setSecretWord] = useState("");
@@ -49,7 +50,7 @@ export default function App() {
 
   return (
     <main className="app-shell">
-      <h1>Welcome to CoderPlanet-X!</h1>
+      <h1 className="start-title">Welcome to CoderPlanet-X!</h1>
       <p className="para">
         From here you can be able to access resourses and other cool things!
       </p>

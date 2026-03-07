@@ -50,8 +50,9 @@ app.use("/sessions", require("./routes/sessionRoutes"));
 
 const secretWordRouter = require("./routes/secretWord");
 app.use("/secretWord", auth, secretWordRouter);
+app.use("/api/notes", auth, require("./routes/noteRoutes"));
 
-const reactDistPath = path.join(__dirname, "..", "React Folder", "dist");
+const reactDistPath = path.join(__dirname, "..", "frontend", "dist");
 app.use(express.static(reactDistPath, { index: false }));
 
 const sendReactPath = (res) => {
@@ -59,10 +60,8 @@ const sendReactPath = (res) => {
 };
 
 app.get("/", auth, (req, res) => sendReactPath(res));
-app.get("/secretword", auth, (req, res) => sendReactPath(res));
 app.get("/about", auth, (req, res) => sendReactPath(res));
 app.get("/notes", auth, (req, res) => sendReactPath(res));
-app.get(/^\/app(\/.*)?$/, auth, (req, res) => sendReactPath(res));
 
 // Error handling middleware
 
