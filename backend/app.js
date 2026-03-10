@@ -11,6 +11,12 @@ const connectDB = require("./database/connect");
 const storeLocals = require("./middleware/storeLocals");
 const auth = require("./middleware/auth");
 
+// extra security packages
+
+const helmet = require("helmet");
+const cors = require("cors");
+const rateLimiter = require("express-rate-limit");
+
 const store = new MongoDBStore({
   uri: process.env.MONGO_URI,
   collection: "sessions",
@@ -43,6 +49,21 @@ app.use(passport.session());
 app.use(require("connect-flash")());
 app.use(storeLocals);
 
+// error handler
+const notFoundMiddleware = require("./middleware/not-found");
+const errorHandlerMiddleware = require("./middleware/errorhandler");
+
+app.use(express.json());
+app.use(helmet());
+app.use(cors());
+app.set("trust proxy", 1);
+app.use(
+  rateLimiter({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+  }),
+);
+
 // API routes
 
 app.use("/public", express.static(path.join(__dirname, "public")));
@@ -73,6 +94,9 @@ app.use((err, req, res, next) => {
   res.status(500).send(err.message);
   console.error(err);
 });
+
+app.use(notFoundMiddleware);
+app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 3000;
 
