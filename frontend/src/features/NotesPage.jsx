@@ -9,9 +9,11 @@ export default function NotesPage() {
   const [editTitle, setEditTitle] = useState("");
   const [editBody, setEditBody] = useState("");
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
 
   const loadNotes = async () => {
     setError("");
+    setNotice("");
     try {
       const res = await fetch("/api/notes", { credentials: "include" });
       const data = await res.json();
@@ -32,6 +34,7 @@ export default function NotesPage() {
   const handleCreate = async (e) => {
     e.preventDefault();
     setError("");
+    setNotice("");
 
     try {
       const res = await fetch("/api/notes", {
@@ -63,6 +66,7 @@ export default function NotesPage() {
 
   const handleUpdate = async (id) => {
     setError("");
+    setNotice("");
 
     try {
       const res = await fetch(`/api/notes/${id}`, {
@@ -89,6 +93,14 @@ export default function NotesPage() {
 
   const handleDelete = async (id) => {
     setError("");
+    setNotice("");
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this note? This action cannot be undone.",
+    );
+    if (!confirmed) {
+      return;
+    }
 
     try {
       const res = await fetch(`/api/notes/${id}`, {
@@ -108,6 +120,7 @@ export default function NotesPage() {
       }
 
       setNotes((prev) => prev.filter((n) => n._id !== id));
+      setNotice("Note deleted.");
     } catch {
       setError("Failed to delete note.");
     }
@@ -154,6 +167,7 @@ export default function NotesPage() {
       </ParagraphElement>
 
       {error && <div className="msg">{error}</div>}
+      {notice && <div className="msg ok">{notice}</div>}
 
       <section className="secret-word-card">
         <h3>Create Note</h3>

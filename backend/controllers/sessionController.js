@@ -41,12 +41,21 @@ const registerShow = (req, res) => {
 };
 
 const registerDo = async (req, res, next) => {
-  if (req.body.password !== req.body.password1) {
+  const username = String(req.body.username || "").trim();
+  const password = String(req.body.password || "");
+  const password1 = String(req.body.password1 || "");
+
+  if (!username || !password || !password1) {
+    req.flash("error", "Username and both password fields are required.");
+    return res.redirect("/sessions/register");
+  }
+
+  if (password !== password1) {
     req.flash("error", "Passwords do not match.");
     return res.redirect("/sessions/register");
   }
   try {
-    await User.create(req.body);
+    await User.create({ username, password });
   } catch (err) {
     if (err.constructor.name === "ValidationError") {
       parseError(err, req);
