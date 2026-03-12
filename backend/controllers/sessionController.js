@@ -17,7 +17,7 @@ const renderAuthPage = (title, body) => `<!DOCTYPE html>
 </html>`;
 
 const registerShow = (req, res) => {
-  const errors = req.flash("error");
+  const errors = res.locals.errors || [];
   const errorHtml = errors
     .map((err) => `<div class="msg">${err}</div>`)
     .join("");
@@ -83,8 +83,8 @@ const logonShow = (req, res) => {
     return res.redirect("/");
   }
 
-  const errors = req.flash("error");
-  const infos = req.flash("status");
+  const errors = res.locals.errors || [];
+  const infos = res.locals.info || [];
   const errorHtml = errors
     .map((err) => `<div class="msg">${err}</div>`)
     .join("");
