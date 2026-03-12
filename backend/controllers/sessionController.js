@@ -1,0 +1,118 @@
+const User = require("../models/user");
+const parseError = require("../utils/parseValidationErrs");
+
+const renderAuthPage = (title, body) => `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>${title}</title>
+  <link rel="stylesheet" href="/public/auth.css" />
+</head>
+<body>
+<main class="auth-shell">
+  ${body}
+</main>
+</body>
+</html>`;
+
+const registerShow = (req, res) => {
+  const errors = res.locals.errors || [];
+  const errorHtml = errors
+    .map((err) => `<div class="msg">${err}</div>`)
+    .join("");
+
+  res.send(
+    renderAuthPage(
+      "Register",
+      `
+    <h1>Register</h1>
+    ${errorHtml}
+    <form action="/sessions/register" method="POST">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="password" name="password1" placeholder="Confirm Password" required />
+      <button type="submit">Register</button>
+    </form>
+    <p><a href="/sessions/logon">Log On</a></p>
+  `,
+    ),
+  );
+};
+
+const registerDo = async (req, res, next) => {
+  const username = String(req.body.username || "").trim();
+  const password = String(req.body.password || "");
+  const password1 = String(req.body.password1 || "");
+
+  if (!username || !password || !password1) {
+    req.flash("error", "Username and both password fields are required.");
+    return res.redirect("/sessions/register");
+  }
+
+  if (password !== password1) {
+    req.flash("error", "Passwords do not match.");
+    return res.redirect("/sessions/register");
+  }
+  try {
+    await User.create({ username, password });
+  } catch (err) {
+    if (err.constructor.name === "ValidationError") {
+      parseError(err, req);
+    } else if (err.name === "MongoServerError" && err.code === 11000) {
+      req.flash("error", "That username is already taken.");
+    } else {
+      return next(err);
+    }
+    return res.redirect("/sessions/register");
+  }
+  req.flash("status", "Registration successful. Please log on.");
+  res.redirect("/sessions/logon");
+};
+
+const logoff = (req, res) => {
+  req.session.destroy(function (err) {
+    if (err) console.log(err);
+    res.clearCookie("connect.sid");
+    return res.redirect("/sessions/logon");
+  });
+};
+
+const logonShow = (req, res) => {
+  if (req.user) {
+    return res.redirect("/");
+  }
+
+  const errors = res.locals.errors || [];
+  const infos = res.locals.info || [];
+  const errorHtml = errors
+    .map((err) => `<div class="msg">${err}</div>`)
+    .join("");
+  const infoHtml = infos
+    .map((info) => `<div class="msg ok">${info}</div>`)
+    .join("");
+  res.send(
+    renderAuthPage(
+      "Log In",
+      `
+    <h1>CoderPlanet-X</h1>
+    <p>Welcome! To enter the page, please register down here. Once you are registered you can now be able to login.</p>
+    ${errorHtml}
+    ${infoHtml}
+    <form action="/sessions/logon" method="POST">
+      <input type="text" name="username" placeholder="Username" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Log On</button>
+    </form>
+    <p><a href="/sessions/register">Register</a></p>
+    `,
+    ),
+  );
+};
+
+module.exports = {
+  registerShow,
+  registerDo,
+  logoff,
+  logonShow,
+};
