@@ -11,14 +11,17 @@ const connectDB = require("./database/connect");
 const storeLocals = require("./middleware/storeLocals");
 const auth = require("./middleware/auth");
 
-// extra security packages
-
 const helmet = require("helmet");
 const cors = require("cors");
 const rateLimiter = require("express-rate-limit");
 
+let mongoURL = process.env.MONGO_URI;
+if (process.env.NODE_ENV == "test") {
+  mongoURL = process.env.MONGO_URI_TEST;
+}
+
 const store = new MongoDBStore({
-  uri: process.env.MONGO_URI,
+  uri: mongoURL,
   collection: "sessions",
 });
 store.on("error", (err) => {
@@ -38,7 +41,7 @@ const sessionParms = {
 
 if (app.get("env") === "production") {
   app.set("trust proxy", 1);
-  sessionParms.cookie.secure = true; // serve secure cookies in production
+  sessionParms.cookie.secure = true;
 }
 
 app.use(session(sessionParms));
@@ -49,22 +52,27 @@ app.use(passport.session());
 app.use(require("connect-flash")());
 app.use(storeLocals);
 
-// error handler
+app.use((req, res, next) => {
+  if (req.path == "/multiply") {
+    res.set("Content-Type", "application/json");
+  } else {
+    res.set("Content-Type", "text/html");
+  }
+  next();
+});
+
 const notFoundMiddleware = require("./middleware/not-found");
 const errorHandlerMiddleware = require("./middleware/errorhandler");
 
-app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.set("trust proxy", 1);
 app.use(
   rateLimiter({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000,
+    max: 100,
   }),
 );
-
-// API routes
 
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use("/sessions", require("./routes/sessionRoutes"));
@@ -84,7 +92,15 @@ app.get("/", auth, (req, res) => sendReactPath(res));
 app.get("/about", auth, (req, res) => sendReactPath(res));
 app.get("/notes", auth, (req, res) => sendReactPath(res));
 
-// Error handling middleware
+app.get("/multiply", (req, res) => {
+  let result = req.query.first * req.query.second;
+  if (isNaN(result)) {
+    result = "NaN";
+  } else if (result == null) {
+    result = "null";
+  }
+  res.json({ result: result });
+});
 
 app.use((req, res) => {
   res.status(404).send(`That page (${req.url}) does not exist!`);
@@ -99,11 +115,10 @@ app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
 const port = process.env.PORT || 3000;
-
-const start = async () => {
+const start = () => {
   try {
-    await connectDB(process.env.MONGO_URI);
-    app.listen(port, () =>
+    connectDB(mongoURL);
+    return app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`),
     );
   } catch (err) {
@@ -112,3 +127,5 @@ const start = async () => {
 };
 
 start();
+
+module.exports = { app };

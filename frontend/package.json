@@ -2,8 +2,9 @@
   "name": "jobs-ejs-frontend",
   "private": true,
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "cmd /c scripts\\vite-dev.cmd",
+    "dev:npm": "vite",
+    "build": "cmd /c scripts\\vite-build.cmd",
     "preview": "vite preview"
   },
   "dependencies": {
