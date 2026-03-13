@@ -3,8 +3,10 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "dev": "nodemon app.js",
-    "start": "node app.js"
+    "dev": "node app.js",
+    "dev:watch": "nodemon app.js",
+    "start": "node app.js",
+    "test": "NODE_ENV=test mocha tests/*.js --timeout 5000 --exit"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -26,6 +28,12 @@
     "xss-clean": "^0.1.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@faker-js/faker": "^10.3.0",
+    "chai": "^6.2.2",
+    "chai-http": "^5.1.2",
+    "factory-bot": "^6.3.1",
+    "mocha": "^7.2.0",
+    "nodemon": "^3.1.11",
+    "puppeteer": "^24.39.0"
   }
 }

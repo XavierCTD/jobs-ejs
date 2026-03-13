@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import styled from "styled-components";
 
 export default function App() {
   const [secretWord, setSecretWord] = useState("");
